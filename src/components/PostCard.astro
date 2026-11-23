@@ -1,0 +1,112 @@
+---
+/**
+ * One blog post, as a card: cover, headline, a line about it and the date.
+ * The whole card is the link. `featured` is the wide version that leads the
+ * blog index.
+ */
+import { Image } from 'astro:assets';
+import { withBase } from '../site';
+import { formatDate, type Post } from '../lib/blog';
+
+interface Props {
+  post: Post;
+  featured?: boolean;
+  /** Heading level for the title, to suit where the card sits. */
+  level?: 'h2' | 'h3';
+}
+
+const { post, featured = false, level: Heading = 'h2' } = Astro.props;
+const { title, description, pubDate, cover, coverAlt } = post.data;
+---
+
+<a href={withBase(`/blog/${post.id}/`)} class:list={['post-card', { 'is-featured': featured }]}>
+  <Image
+    class="post-card-cover"
+    src={cover}
+    alt={coverAlt}
+    widths={[480, 800, 1200]}
+    sizes={featured ? '(min-width: 56rem) 38rem, 92vw' : '(min-width: 48rem) 24rem, 92vw'}
+    loading={featured ? 'eager' : 'lazy'}
+  />
+  <div class="post-card-text">
+    <Heading class:list={[featured ? 'h2' : 'h3', 'post-card-title']}>{title}</Heading>
+    <p class="post-card-about">{description}</p>
+    <p class="small muted">
+      <time datetime={pubDate.toISOString().slice(0, 10)}>{formatDate(pubDate)}</time>
+    </p>
+  </div>
+</a>
+
+<style>
+  .post-card {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    background: var(--paper);
+    border-radius: 28px;
+    overflow: hidden;
+    text-decoration: none;
+    transition: transform 0.25s ease;
+  }
+
+  .post-card:hover {
+    transform: translateY(-3px);
+  }
+
+  .post-card-cover {
+    width: 100%;
+    height: auto;
+    aspect-ratio: 16 / 9;
+    object-fit: cover;
+  }
+
+  .post-card-text {
+    display: flex;
+    flex-direction: column;
+    gap: 0.85rem;
+    padding: clamp(1.5rem, 1rem + 1.5vw, 2.25rem);
+  }
+
+  .post-card-about {
+    color: var(--ink-muted);
+    text-wrap: pretty;
+  }
+
+  .post-card:hover .post-card-title {
+    text-decoration: underline;
+    text-decoration-thickness: 0.06em;
+    text-underline-offset: 0.14em;
+  }
+
+  /* The lead post: cover beside the words once there's room. */
+  @media (min-width: 56rem) {
+    .is-featured {
+      flex-direction: row;
+      align-items: stretch;
+    }
+
+    .is-featured .post-card-cover {
+      width: 55%;
+      height: auto;
+      align-self: stretch;
+    }
+
+    .is-featured .post-card-text {
+      flex: 1;
+      justify-content: center;
+      gap: 1.1rem;
+      padding: clamp(2rem, 1rem + 3vw, 3.5rem);
+    }
+
+    .is-featured .post-card-about {
+      font-size: var(--t-lead);
+      line-height: 1.5;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .post-card {
+      transition: none;
+    }
+  }
+</style>

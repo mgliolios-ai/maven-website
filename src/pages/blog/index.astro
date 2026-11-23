@@ -1,0 +1,91 @@
+---
+import Base from '../../layouts/Base.astro';
+import PostCard from '../../components/PostCard.astro';
+import { getPosts } from '../../lib/blog';
+
+/*
+ * The blog index. The newest post leads as a wide card and the rest sit in a
+ * grid under it. Posts are Markdown files in src/content/blog.
+ *
+ * Linked from the footer, under "About us".
+ */
+const [latest, ...rest] = await getPosts();
+---
+
+<Base
+  title="Blog"
+  description="Plain guides to the practical side of your health, from getting your records to getting ready for an appointment. Written in Australia by the Marlo team."
+>
+  <section class="section blog">
+    <div class="page">
+      <header class="head">
+        <h1 class="display blog-title">The Marlo blog.</h1>
+        <p class="head-sub">
+          Plain guides to the practical side of your health, like getting your records, getting
+          ready for appointments and keeping track of it all.
+        </p>
+      </header>
+
+      {
+        latest ? (
+          <div class="blog-lead">
+            <PostCard post={latest} featured />
+          </div>
+        ) : (
+          <p class="lead blog-empty">Our first posts are on their way.</p>
+        )
+      }
+
+      {
+        rest.length > 0 && (
+          <ul class="blog-grid">
+            {rest.map((post) => (
+              <li>
+                <PostCard post={post} />
+              </li>
+            ))}
+          </ul>
+        )
+      }
+    </div>
+  </section>
+</Base>
+
+<style>
+  .blog {
+    padding-block: clamp(8rem, 5rem + 8vw, 12rem) clamp(4rem, 2rem + 6vw, 8rem);
+  }
+
+  .blog-title {
+    font-size: clamp(2.9rem, 1.4rem + 6vw, 6rem);
+  }
+
+  .blog-lead {
+    margin-top: clamp(2.5rem, 1.5rem + 3vw, 4.5rem);
+  }
+
+  .blog-empty {
+    margin: clamp(2.5rem, 1.5rem + 3vw, 4.5rem) auto 0;
+    text-align: center;
+  }
+
+  .blog-grid {
+    list-style: none;
+    padding: 0;
+    margin-top: clamp(1rem, 0.5rem + 1.2vw, 1.5rem);
+    display: grid;
+    gap: clamp(1rem, 0.5rem + 1.2vw, 1.5rem);
+  }
+
+  @media (min-width: 48rem) {
+    .blog-grid {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+
+  @media (min-width: 72rem) {
+    .blog-grid {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+  }
+</style>

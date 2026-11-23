@@ -48,6 +48,38 @@ Two extra pages, linked from the footer under "About us" (not the top nav).
 | `/practitioners` (`practitioners.astro`) | For practitioners. Built from Bianca's "Marlo - Your Health Companion" outreach doc: a welcome from Bianca, who we are, why we exist, the two phases, the Australian difference and an invitation to partner. "Start a conversation" needs `PUBLIC_PARTNER_EMAIL` set. |
 | `/team` (`team.astro`) | Our team. Group photo, why we built Marlo, and a card per person. Edit `team` at the top of the file. Roles are from the Roles and Responsibilities doc; intros are drafts for each person to rewrite. Headshots go in `public/images/team/` (Adam's still to come). |
 
+## Blog
+
+`/blog` lists the posts and `/blog/<file-name>/` is each one. Linked from the
+footer, under "About us".
+
+To add a post:
+
+1. Add a Markdown file to `src/content/blog/`. The file name is the web
+   address, so keep it short, lowercase and hyphenated.
+2. Put two 16:9 images in `src/assets/blog/`: a cover with no words on it, and
+   a share image with the headline on it (for link previews).
+3. Fill in the block at the top of the file. Copy
+   `how-to-access-your-health-records.md` to start; `src/content.config.ts`
+   lists every field.
+4. Write the post under it. `##` headings become the "On this page" list, a
+   `>` quote is styled as something to copy, and a last line in `_italics_`
+   becomes the small print.
+
+`draft: true` keeps a post out of the built site. It still shows in
+`npm run dev`.
+
+Health content needs the Clinical Lead's sign-off before it goes live. Add
+`reviewedBy` once it's been checked and the post says who checked it and when.
+
+The post page (`pages/blog/[slug].astro`) adds the byline, sources, a
+general-information note, and the search and sharing tags (`og:image`,
+`BlogPosting` and breadcrumb data). Only set `updatedDate` when the words
+change.
+
+Link to another post with its full path, `/blog/<file-name>/`, and only once
+that post is live.
+
 ## Copy rules
 
 The reader is a woman who wants help with her health, not a tech person.
@@ -100,4 +132,4 @@ face is Aloevera (self-hosted, single weight); body text is Karla.
 - **Crisis numbers.** The footer lists 000, Lifeline, 1800RESPECT and 13YARN.
   These should be checked by the Clinical Lead before launch.
 - **Legal pages.** No privacy policy or terms yet.
-- **OG image.** `og:image` isn't set.
+- **OG image.** `og:image` is only set on blog posts.
